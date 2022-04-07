@@ -4,8 +4,9 @@ import { createStackNavigator } from '@react-navigation/stack';
 import {MaterialCommunityIcons, Ionicons} from "@expo/vector-icons"
 
 import HomeScreen from '../screens/HomeScreen';
-import SettingsScreen from "../screens/SettingsScreen"
+import LaunchScreen from '../screens/LaunchScreen';
 import CameraViewScreen from '../screens/CameraViewScreen';
+import GrainCartScreen from '../screens/GrainCartScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -27,10 +28,11 @@ const HomeStack = props => {
     return (
     <Stack.Navigator>
       <Stack.Screen
-        name="Settings"
-        component={SettingsScreen}
+        name="Carts"
+        component={GrainCartScreen}
         options={{
-          title: "Settings",
+          headerLeft: (props) => null,
+          title: "Se dine kornvogne",
           headerTintColor: "#FF9054",
           headerTitleAlign: "center"
         }}
@@ -46,6 +48,7 @@ const HomeStack = props => {
         name="Camera"
         component={CameraViewScreen}
         options={{
+          
           headerShown: false,
         }}
       />
@@ -53,21 +56,42 @@ const HomeStack = props => {
     )
   };
 
+  const LaunchScreenNav = props => {
+    return (
+    <NavigationContainer>
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Launch"
+        component={LaunchScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Tab.Screen 
+        name="Main"
+        component={NavigationStack}
+        options={{
+          headerShown: false,
+        }}
+      />
+    </Stack.Navigator>
+    </NavigationContainer>
+    )
+  };
+
   const NavigationStack = () => {
   
     return (
-      <NavigationContainer>
       <Tab.Navigator
-        tabBarOptions={{
-          activeTintColor: '#2e64e5',
-        }}
         screenOptions={{
-          headerShown: false
+          headerShown: false,
+          activeTintColor: '#2e64e5',
         }}>
         <Tab.Screen
           name="HomeScreen"
           component={HomeStack}
           options={({route}) => ({
+            headerLeft: null,
             tabBarLabel: 'Home',
             tabBarShowLabel: true,
             tabBarVisible: route.state && route.state.index === 0,
@@ -82,10 +106,11 @@ const HomeStack = props => {
         />
   
         <Tab.Screen
-          name="Setting"
+          name="Carts"
           component={SettingsStack}
           options={{
-            tabBarLabel: 'Settings',
+            headerBackVisible:false,
+            tabBarLabel: 'Carts',
             tabBarIcon: () => (
               <Ionicons name="md-settings-outline" size={25} color="black" />
             ),
@@ -96,15 +121,14 @@ const HomeStack = props => {
           name="CameraScreen"
           component={CameraViewStack}
           options={{
-            tabBarLabel: 'Camera',
+            tabBarLabel: 'Calibration',
             tabBarIcon: () => (
               <Ionicons name="md-videocam-outline" color={"black"} size={25} />
             ),
           }}
         />
       </Tab.Navigator>
-      </NavigationContainer>
     );
   };
   
-  export default NavigationStack;
+  export {NavigationStack, LaunchScreenNav};

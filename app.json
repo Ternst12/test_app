@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "test_app",
-    "slug": "test_app",
-    "version": "1.0.0",
+    "name": "UnloaudSync01",
+    "slug": "UnloadSync01",
+    "version": "1.0.1",
     
-    "icon": "./assets/icon.png",
+    "icon": "./images/CartCreations/CombineIcon.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./images/CartCreations/CombineIcon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -17,16 +17,18 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.smartAG.unloaudSync01"
     },
     "android": {
+      "package": "com.smartAG.unloaudSync01",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./images/CartCreations/CombineIcon.png"
     }
   }
 }
