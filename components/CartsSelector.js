@@ -32,7 +32,7 @@ const CartSelector = props => {
     const saveCart = useCallback(async(navn, imageUri, højde, bredde, længde) => {
         try {
         await dispatch(CartsActions.addCart(navn, imageUri, højde, bredde, længde));
-        setNavn("Cart Name")
+        setNavn("Wagen Name")
         setBredde("")
         setImageTaken("")
         setLængde("")
@@ -44,7 +44,7 @@ const CartSelector = props => {
 
     useLayoutEffect(() => {
         props.navigation.setOptions({ 
-            headerTitle: props => <Text style={{color: Colors.fallOragne, fontSize: 24}}>See and Save Carts</Text>,
+            headerTitle: props => <Text style={{color: Colors.fallOragne, fontSize: 24}}>Wagen Übersicht</Text>,
             headerTitleAlign: "center",
             headerRight: () => (
                 <TouchableOpacity style={{marginRight: 30}} onPress={() => {props.setModalVisible(true)}}>

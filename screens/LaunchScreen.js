@@ -2,18 +2,18 @@ import React, {useRef, useState, useEffect, useCallback} from "react"
 import { View, Text, Button, StyleSheet, Dimensions, TouchableOpacity} from "react-native"
 import Modal from "react-native-modal";
 import { Video} from 'expo-av';
-import { MaterialIcons } from '@expo/vector-icons';
 import * as CartsActions from "../store/actions/CartsActions"
 import SelectDropdown from 'react-native-select-dropdown'
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
+import { Ionicons } from '@expo/vector-icons';
 import Colors from "../constants/Colors";
 
 export default LaunchScreen = props => {
     const video = useRef(null);
     const [status, setStatus] = useState({});
     const [errorMessage, setErrorMessage] = useState(false);
-    const [modalVisible, setModalVisible] = useState(true)
+    const [modalVisible, setModalVisible] = useState(false)
     const [background, setBackGrond] = useState("black")
     const [selectedValue, setSelectedValue] = useState("");
     const carts = useSelector(state => state.carts.carts)
@@ -32,24 +32,29 @@ export default LaunchScreen = props => {
         }
     })
 
-    const noCartsOption = {
-        name: "Add your cart information"
-    }
+    const noCartsOption = [{
+        name: "Füge einen neuen Wagen dazu"
+    }]
 
     return (
       <View style={{flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: background}}>
+
+        <TouchableOpacity style={{position: "absolute", right: 50, top: 50}} onPress={() => setModalVisible(true)}>
+            <Ionicons name="play-forward-circle-outline" size={50} color="white" />
+        </TouchableOpacity>
+
         <Video
           shouldPlay={true}
           ref={video}
           style={{width: Dimensions.get("window").width, height: Dimensions.get("screen").height * 0.6, borderRadius: 40}}
-          source={require("../animation/UnloadSyncLaunch.mp4")}
+          source={require("../animation/smartAgLogo.mp4")}
           useNativeControls={false}
           resizeMode="stretch"
           isLooping={false}
           onPlaybackStatusUpdate={status => {
               setStatus(() => status); 
               if(status.positionMillis > 8000){
-                  setBackGrond("grey")
+                  setBackGrond("black")
               }
               if(status.didJustFinish == true){
                   setModalVisible(true)
@@ -63,12 +68,13 @@ export default LaunchScreen = props => {
           <View style={styles.modal}>
             <View style={{position: "absolute", right: 20, bottom: 20}}>
                 <TouchableOpacity onPress={() => {
+                    console.log(carts.length  + " + " + noCartsOption.name)
                     if(selectedValue == "") {
                         setErrorMessage(true)
                     } else {
                     selectCart(selectedValue.id, selectedValue.name, selectedValue.imageUri, selectedValue.heigt, selectedValue.width, selectedValue.lenght)
                     props.navigation.navigate("Main", {
-                        screen: selectedValue.name == "Create a cart" ? "Carts" : "Home", 
+                        screen: selectedValue.name == "Füge einen neuen Wagen dazu" ? "Carts" : "Home", 
                     })
                     console.log(selectedValue)
                     setModalVisible(false) 
@@ -84,6 +90,7 @@ export default LaunchScreen = props => {
                     console.log(selectedItem, index)
                     setSelectedValue(selectedItem)
                 }}
+                
                 buttonTextAfterSelection={(selectedItem, index) => {
                     // text represented after item is selected
                     // if data array is an array of objects then return selectedItem.property to render after item is selected
@@ -94,10 +101,10 @@ export default LaunchScreen = props => {
                     // if data array is an array of objects then return item.property to represent item in dropdown
                     return item.name
                 }}
-                defaultButtonText="Choose your cart"
+                defaultButtonText="Wähle ein Wagen aus"
                 
             />
-            {errorMessage ? <Text style={{color: "red", fontWeight: "bold"}}>You have to choose a cart</Text> : <Text></Text>}
+            {errorMessage ? <Text style={{color: "red", fontWeight: "bold"}}>Du musst einen Wagen auswählen</Text> : <Text></Text>}
             
           </View>
           

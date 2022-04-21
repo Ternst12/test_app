@@ -16,22 +16,32 @@ import BottomSheet from 'reanimated-bottom-sheet';
 import CartItem from '../components/CartItem';
 
 import * as CartsActions from "../store/actions/CartsActions"
+import Colors from '../constants/Colors';
 
 var bs = React.createRef();
 var fall = new Animated.Value(1);
 
+const wait = (timeout) => {
+  return new Promise(resolve => setTimeout(resolve, timeout));
+}
 
 const GrainCartScreen = props => {
 
   const carts = useSelector(state => state.carts.carts)
-  const [nameEdit, setNameEdit] = useState("Cart Name");
+  const [nameEdit, setNameEdit] = useState("Wagen Name");
   const [selectedImage, setSelectedImage] = useState("");
   const [heightEdit, setHeightEdit] = useState("");
   const [widthEdit, setWidthEdit] = useState("");
   const [lenghtEdit, setLengthEdit] = useState("");
-  const [cartId, setCartId] = useState()
+  const [refreshing, setRefreshing] = useState(false)
   const [editMode, setEditMode] = useState(false);
   const [createCartModal, setCreateCartModal] = useState(false)
+
+  const onRefresh = React.useCallback(() => {
+    dispatch(CartsActions.loadCarts())
+    setRefreshing(true);
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
   
 
   useEffect(() =>{
@@ -41,18 +51,24 @@ const GrainCartScreen = props => {
   const setCartToEdit = (id, name, imageUri, height, length, width) => {
     console.log("that was a long press");      
     Alert.alert(
-              "You have seleceted a cart",
-              "what do you want to do with it?",
+              "Sie haben einen Wagen ausgesucht",
+              "wie möchten Sie weiter verfahren",
               [
                 {
-                  text: "Select the cart",
+                  text: "Mit Wagen fahren",
                   onPress: () => {
                     dispatch(CartsActions.SelectCart(id, name, imageUri, height, width, length))
                     props.navigation.navigate("Home")
+                    setEditMode(false)
+                    setNameEdit("")
+                    setHeightEdit("")
+                    setLengthEdit("")
+                    setWidthEdit("")
+                    setSelectedImage("")
                   }
                 },
                 {
-                  text: "Edit",
+                  text: "Ändern",
                   onPress: () => {
                     setSelectedImage(imageUri); 
                     setNameEdit(name); 
@@ -63,7 +79,7 @@ const GrainCartScreen = props => {
                   },
                   style: "OK"
                 },
-                { text: "Delete", onPress: () => dispatch(CartsActions.DeleteCart(id))}
+                { text: "Löchen", onPress: () => dispatch(CartsActions.DeleteCart(id))}
               ]
             );
     }
@@ -75,7 +91,7 @@ const GrainCartScreen = props => {
     <View style={styles.panel}>
       <View style={{alignItems: 'center'}}>
         <Text style={styles.panelTitle}>You havent created a cart yet</Text>
-        <Text style={styles.panelSubtitle}>{"We need some information about the cart you are planning the use.\nPlease have the dimensions of the trolley's height, length and width ready."}</Text>
+        <Text style={styles.panelSubtitle}>{"Wir brauchen ein par informationen über denn Wagen, denn Sie benutzen möchten.\nPlease have the dimensions of the trolley's height, length and width ready."}</Text>
       </View>
       <TouchableOpacity
         style={styles.panelButton}>
@@ -139,11 +155,16 @@ const GrainCartScreen = props => {
           </View>
           
         </View>
+        <View style={styles.refreshMessage}>
+          <Text style={styles.refreshMessageText}>Bei fehlenden Daten einfach die Liste nach unten ziehen</Text>
+        </View>
         <FlatList 
         data={carts} 
         extraData={carts}
         keyExtractor={item => item.id}
         numColumns={1}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
         renderItem={itemData => (
         <CartItem 
         onSelect={() => {
@@ -266,6 +287,15 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#f2f2f2',
     paddingBottom: 5,
+  },
+  refreshMessage: {
+    height: "5%",
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  refreshMessageText: {
+    color: Colors.fallOragne,
+    fontSize: 18
   },
   actionError: {
     flexDirection: 'row',

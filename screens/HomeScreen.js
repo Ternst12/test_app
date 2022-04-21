@@ -13,7 +13,14 @@ import {
   StackedBarChart,
   } from 'react-native-chart-kit';
 import Colors from '../constants/Colors';
-import { SelectCart } from '../store/actions/CartsActions';
+
+
+var test 
+
+setInterval(() => {
+  test = Array.from({length: 20}, () => Math.floor(Math.random() * 10))
+  console.log(test)
+  }, 1000)  
 
 
 const HomeScreen = props => {
@@ -23,7 +30,7 @@ const HomeScreen = props => {
     const selectedCart = useSelector(state => state.carts.selectedCart)
 
     const knob = require("../MicrosoftTeams-image.png")
-    const [fillUpData, setFillUpData] = useState([])
+    const [fillUpData, setFillUpData] = useState(test)
     const [positionX, setPositionX] = useState("0%")
     const [positionZ, setPositionZ] = useState("0%")
     const [positionZText, setPositionZText] = useState("0%")
@@ -36,13 +43,12 @@ const HomeScreen = props => {
     const [shrinkCart, setShrinkCart] = useState(null)
     const [shrinkFactor, setShrinkFactor] = useState(100)
 
- 
 
-    
   var ros = new ROSLIB.Ros();
 
 
   useEffect(() => {
+      setFillUpData(test)
       if (selectedCart) {
       console.log("SelectedCart = ", selectedCart)
       setCartLength(selectedCart.lenght <= 10 ? selectedCart.lenght * 70 : selectedCart.lenght * 50)
@@ -52,6 +58,9 @@ const HomeScreen = props => {
       componentDidMount();  
   }, [selectedCart])
 
+  setInterval(() => {
+    setFillUpData(test)
+  }, 1000);
 
   const wagon_pose_sub = new ROSLIB.Topic({
     ros : ros,
@@ -128,12 +137,16 @@ const HomeScreen = props => {
       const auger_pose = m.auger_pose
       const dataX = auger_pose.position.x
       const dataZ = auger_pose.position.z - 0.05
-      
-      if(dataX < 0 || dataX > 1) {
+      console.log("dataX = ", dataX)
+      if(dataX > 0 && dataX < 1) {
+        console.log("tester")
+        setShrinkCart(null)
+      } else if (dataX > 1) {
+        console.log("over 1 ", shrinkFactor)
+        setShrinkCart(Math.abs(dataX) * 10)
+      } else if (dataX < 0) {
         console.log(shrinkFactor)
         setShrinkCart(Math.abs(dataX) * shrinkFactor)
-      } else {
-        setShrinkCart(null)
       }
 
       setPositionX(parseInt(dataX * 100) + "%")
@@ -207,7 +220,7 @@ const HomeScreen = props => {
      
         <View style={{
           width: shrinkCart ? cartLength - shrinkCart : cartLength, 
-          height: cartWidth, 
+          height: shrinkCart ? cartWidth - shrinkCart : cartWidth, 
           borderTopColor: Colors.fallGreen, 
           borderBottomColor: Colors.fallGreen,
           borderWidth:10, 
@@ -234,7 +247,6 @@ const HomeScreen = props => {
         </View>
       <Text>Position X : {positionX}</Text>
       <Text>Position Z : {positionZText}</Text>
-      <Text>{fillUpData[9]}</Text>
 
       <ImageBackground source={image} resizeMode="stretch" style={{width: "90%", marginTop: Dimensions.get("screen").height * 0.10}}>
             
@@ -242,7 +254,6 @@ const HomeScreen = props => {
                 {/*It is an Example of LineChart*/}
                
                   <BarChart 
-                  
                   withInnerLines= {false}
                   withHorizontalLabels = {false}
                   data={{

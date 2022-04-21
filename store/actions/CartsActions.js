@@ -11,17 +11,22 @@ export const addCart = (Name, image, height, width, lenght) => {
     return async dispatch => {
       console.log("Image = ", image)
 
-      
-      const fileName = image.split('/').pop();
-      const newPath = FileSystem.documentDirectory + fileName;
+      var fileName = ""
+      var newPath = ""
+
+      if(image != "") {
+      fileName = image.split('/').pop();
+      newPath = FileSystem.documentDirectory + fileName;
+      }
      
       console.log("newPath = ", newPath)
   
       try {
+        if(newPath != "") {
         await FileSystem.moveAsync({
           from: image,
           to: newPath
-        }); 
+        }); }
         const dbResult = await insertCart(
           Name,
           newPath,

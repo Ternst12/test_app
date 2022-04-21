@@ -18,7 +18,7 @@ const CameraViewScreen = props => {
   const [angleValue, setAngleValue] = useState("?")
   const [modalVisible, setModalVisible] = useState(false)
   const [modalText, setModalText] = useState("")
-  const [cancelModal, setCancelModal] = useState(false)
+  const [cancelModal, setCancelModal] = useState(true)
   const [succes, setSucces] = useState(true)
 
 
@@ -154,7 +154,7 @@ const componentDidMount = () => {
   const testAlertTimer = () => {
       setActivity(true)
       setModalVisible(true)
-      setCancelModal(false)
+      setCancelModal(true)
       componentDidMount();
       calibrator();
       getCalibrationData();
@@ -213,7 +213,7 @@ const componentDidMount = () => {
               <Text style={{fontSize: 22, fontWeight: "700", color: "blue"}}>{activity ? <ActivityIndicator color={"blue"} size={"small"}/> : lengthValue}</Text>
           </View>
           <View style={{position: "absolute", right: "24%", top: "62.5%", flexDirection: "row"}}>
-              <Text style={{fontSize: 22, fontWeight: "700", color: "blue"}}>{activity ? <ActivityIndicator color={"blue"} size={"small"}/> : lengthValue}</Text>
+              <Text style={{fontSize: 22, fontWeight: "700", color: "blue"}}>{activity ? <ActivityIndicator color={"blue"} size={"small"}/> : angleValue}</Text>
           </View>
           <View style={{position: "absolute", right: "19%", top: "60%", transform: [{rotate: "270deg"}]}}>
               <MaterialCommunityIcons name="angle-obtuse" size={74} color="black" />
